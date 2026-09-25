@@ -1,0 +1,90 @@
+name: Skill Security Scan
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "skills/**"
+      - "scripts/scan-skills.sh"
+      - ".github/workflows/skill-scan.yml"
+  pull_request:
+    paths:
+      - "skills/**"
+      - "scripts/scan-skills.sh"
+      - ".github/workflows/skill-scan.yml"
+  schedule:
+    - cron: "23 4 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: skill-scan-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  PYTHON_VERSION: "3.12"
+  UV_VERSION: "0.12.19"
+  SKILLSPECTOR_REF: "c7958a3268d9498644b22edb75d0f051bbc8cbfc"
+
+jobs:
+  scan:
+    name: SkillSpector
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      security-events: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Set up uv
+        uses: astral-sh/setup-uv@c18668ad3cf93ea998bef934396af7bb5c839dc7 # v10.2.0
+        with:
+          version: ${{ env.UV_VERSION }}
+          python-version: ${{ env.PYTHON_VERSION }}
+          enable-cache: true
+
+      - name: Install SkillSpector
+        run: uv tool install "git+https://github.com/NVIDIA/skillspector.git@${SKILLSPECTOR_REF}"
+
+      - name: Verify SkillSpector
+        run: skillspector --version
+
+      - name: Scan every skill
+        id: scan
+        continue-on-error: true
+        run: bash scripts/scan-skills.sh skills
+
+      - name: Publish report to job summary
+        if: always()
+        run: |
+          if [ -f skillspector-reports/summary.md ]; then
+            cat skillspector-reports/summary.md >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "No summary was produced. See the scan logs in the uploaded artifact." >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+      - name: Upload SARIF to code scanning
+        if: always() && hashFiles('skillspector-reports/sarif/*.sarif') != ''
+        uses: github/codeql-action/upload-sarif@1190a975f95ce23525efb6a3fc21ea29567c1b52 # v3.38.2
+        continue-on-error: true
+        with:
+          sarif_file: skillspector-reports/sarif
+          category: skillspector
+
+      - name: Upload scan reports
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: skillspector-reports
+          path: skillspector-reports/
+          if-no-files-found: warn
+
+      - name: Enforce security gate
+        if: steps.scan.outcome == 'failure'
+        run: |
+          echo "SkillSpector reported findings above the risk threshold, or a batch failed to scan."
+          echo "See the job summary and the skillspector-reports artifact for details."
+          exit 1
