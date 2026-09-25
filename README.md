@@ -208,5 +208,5 @@ and niche skills have been organized into the `archive/` directory:
 
 ## License
 
-See [LICENSE](LICENSE).
+See [MIT](LICENSE).
 
