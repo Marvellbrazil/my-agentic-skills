@@ -1,3 +1,8 @@
+---
+name: fumadocs
+description: Set up a documentation site with Fumadocs. Use when scaffolding a new docs app or adding documentation to a project using Next.js, Waku, React Router, or TanStack Start.
+---
+
 # Set up a Fumadocs site
 
 Instructions for AI coding agents, follow them in order. Fumadocs docs: https://fumadocs.dev/docs, append `.mdx` to any docs page URL to get it as Markdown, https://fumadocs.dev/llms.txt lists all pages.

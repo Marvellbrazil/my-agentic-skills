@@ -1,5 +1,5 @@
 ---
-name: workflow-skill-creator
+name: workflow_skill_creator
 description: >
   Distills a completed user workflow or interaction into a reusable agent
   skill. Use when the user asks to turn their workflow, interaction, or
