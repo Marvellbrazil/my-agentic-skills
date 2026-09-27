@@ -48,21 +48,29 @@ bash scripts/scan-skills.sh skills
 | Explore | `/explore` | Read-only deep exploration of a codebase: architecture, module boundaries, entry points, data flow, conventions, standards, tooling, and CI gates, returned as a structured profile for context gaining and planning. |
 | I18n | `/i18n` | Internationalizes a project across language tags, date/time/time-zone/calendar formats, numbers and currency, RTL and BiDi, pluralization and ICU messages, collation and sorting, Unicode text processing, cultural adaptation, and localization QA. Scopable to selected aspects or languages. |
 | S13n | `/s13n` | Standardizes a project: detects where the same concern is solved in divergent ways across files, asks which variant is canonical when the repo does not already answer it, then normalizes the code and adds a lint guard so the divergence cannot return. |
+| Enhance | `/enhance` | Rewrites a raw prompt into a precise, executable specification before any work begins — surfaces blocking ambiguities, asks only the questions that change the outcome, and returns a copy-pasteable enhanced prompt with a change log. Never executes the task. |
+| Explain | `/explain` | Teaches how a piece of code works: traces the flow from entry to outcome, builds a mental model with analogies and diagrams, and connects it to where the same pattern applies. Read-only. |
+| Data Dummer | `/data-dummer` | Generates seed, fixture, and factory data that satisfies the real schema — dependency-ordered, locale-aware, deterministic, and idempotent. Reads the ORM or migrations before writing a line. |
+| Bring Me Ideas | `/bring-me-ideas` | Researches a codebase and proposes ranked next-feature ideas, each answered in full 5W+1H form with evidence from the actual project. Read-only. |
 | Summarize | `/summarize` | Produces a structured execution summary of the session: actions taken, issues with root causes, changes made, verification evidence, known gaps, and ordered follow-up. |
 | Conventional Commit | `/conventional-commit` | Commits staged work following the Conventional Commits spec, splitting a large working tree into atomic commits. Scopes only when the change is localized, `!` only for a real breaking point. Never adds a co-author trailer. |
 | Conventional Commit With Coauthor | `/conventional-commit-with-coauthor` | Same as Conventional Commit, but appends a co-author trailer crediting the agent — resolved from a real identity, never fabricated. Omits the trailer when no agent identity exists. |
+| No Config | `/no-config` | Removes agent-facing configuration from a project — rules files, agent directories, and agent-generated docs — while preserving genuine project documentation. Inventories and confirms before deleting. |
 | Ping | `/ping` | Health-checks the session and replies `pong` with measured tool round-trip latency, host facts, and clock skew. Reports failures instead of inventing numbers. |
 
 ## Active Skills Index
 
-The primary collection of 92 active skills maintained in `skills/`, organized by concern:
+The primary collection of 97 active skills maintained in `skills/`, organized by concern:
 
 ### Core Workflow & Lifecycle
 
 | Skill Name | Command | Description |
 | --- | --- | --- |
 | Brainstorm | `/brainstorm` | Reads the designated project files, analyzes the architecture, and triggers an interactive session to extract user preferences before writing code. |
+| Bring Me Ideas | `/bring-me-ideas` | Researches a codebase and proposes ranked next-feature ideas, each answered in full 5W+1H form (what problem, who benefits, when it matters, where it lives in... |
 | Doubt Driven Development | `/doubt-driven-development` | Subjects every non-trivial decision to a fresh-context adversarial review before it stands. |
+| Enhance | `/enhance` | Rewrites a user's raw prompt into a precise, unambiguous specification before any work begins — surfacing what is missing, asking only the questions that... |
+| Explain | `/explain` | Teaches how a piece of code works — tracing the flow from entry to outcome, building a mental model with analogies, drawing a diagram, and connecting it to... |
 | Explore | `/explore` | Explores a codebase to build a complete, evidence-backed model of the project — architecture, module boundaries, entry points, data flow, conventions... |
 | Handoff | `/handoff` | Compact the current conversation into a handoff document for another agent to pick up. |
 | Idea Refine | `/idea-refine` | Refines raw ideas into sharp, actionable concepts through structured divergent and convergent thinking. |
@@ -106,6 +114,7 @@ The primary collection of 92 active skills maintained in `skills/`, organized by
 | I18n | `/i18n` | Internationalizes a project across language tags and negotiation, dates/times/time zones/calendars, numbers and currency, bidirectional text and RTL layout... |
 | Modularize | `/modularize` | Restructures monolithic files and tightly coupled functions into modular, decoupled components adhering to the Single Responsibility Principle (SRP). |
 | No Comment | `/no-comment` | No comments were writed while writing the code |
+| No Config | `/no-config` | Removes agent-facing configuration artifacts from a project — rules files (AGENTS.md, CLAUDE.md, GEMINI.md, .cursorrules), agent directories (.claude/... |
 | Optimalize | `/optimalize` | Analyzes the codebase for performance, memory, and structural optimizations. |
 | Performance Optimization | `/performance-optimization` | Optimizes application performance across frontend, backend, queries, and databases. |
 | Performance Optimizer | `/performance-optimizer` | Identifies and fixes performance bottlenecks in code, databases, and APIs. |
@@ -122,6 +131,7 @@ The primary collection of 92 active skills maintained in `skills/`, organized by
 | Code Review | `/code-review` | Review the changes since a fixed point (commit, branch, tag, or merge-base) along two axes: Standards (does the code follow this repo's documented coding... |
 | Code Review And Quality | `/code-review-and-quality` | Conducts multi-axis code review. |
 | Codebase Audit Pre Push | `/codebase-audit-pre-push` | Deep audit before GitHub push: removes junk files, dead code, security holes, and optimization issues. |
+| Data Dummer | `/data-dummer` | Generates seed, fixture, and factory data that satisfies the project's real schema — reading the ORM or migrations first, respecting foreign keys and... |
 | Debugging And Error Recovery | `/debugging-and-error-recovery` | Guides systematic root-cause debugging. |
 | Diagnosing Bugs | `/diagnosing-bugs` | Diagnosis loop for hard bugs and performance regressions. |
 | Logic Lens | `/logic-lens` | AI-powered Claude Code skill that performs deep code review using formal logic and reasoning frameworks to detect bugs, anti-patterns, and security risks... |
@@ -219,7 +229,7 @@ and niche skills have been organized into the `archive/` directory:
 │   └── skill-scan.yml            # Automated SkillSpector security gate
 ├── scripts/
 │   └── scan-skills.sh            # Parallel batch scanner for skills
-├── skills/                       # 92 Main Active Skills
+├── skills/                       # 97 Main Active Skills
 │   ├── explore/
 │   ├── i18n/
 │   │   ├── SKILL.md
