@@ -1,6 +1,6 @@
 ---
 name: conventional-commit-with-coauthor
-description: Commits staged work using the Conventional Commits specification and appends a co-author trailer crediting the agent, splitting a large working tree into multiple atomic commits. Use when the user types /conventional-commit-with-coauthor or explicitly asks for a conventional commit that credits the agent as co-author. Falls back to no trailer when no real agent identity is available.
+description: Commits staged work using the Conventional Commits specification and appends a co-author trailer crediting the agent. Defaults to a single commit when the working tree is one coherent change, splitting only when the changes are genuinely unrelated. Use when the user types /conventional-commit-with-coauthor or explicitly asks for a conventional commit that credits the agent as co-author. Falls back to no trailer when no real agent identity is available.
 allowed-tools: Bash Read Grep Glob
 ---
 
@@ -8,7 +8,7 @@ allowed-tools: Bash Read Grep Glob
 
 Identical to `/conventional-commit` in every respect except one: this skill appends a **co-author trailer** crediting the agent, and only when a real agent identity exists.
 
-Read `/conventional-commit` for the full procedure — staging discipline, type taxonomy, scope rules, the `!` breaking-change marker, subject grammar, and the multi-commit split strategy are all the same. This file documents only what differs: identity resolution, trailer format, placement, and the validation that the trailer is well-formed.
+Read `/conventional-commit` for the full procedure — staging discipline, type taxonomy, scope rules, the `!` breaking-change marker, subject grammar, and the decision of how many commits to make. **The commit-count default is one commit**, and it applies here unchanged: a coherent working tree produces a single commit with a single trailer. This file documents only what differs: identity resolution, trailer format, placement, and the validation that the trailer is well-formed.
 
 ## Rule 1 — Never Fabricate an Identity
 
@@ -98,7 +98,9 @@ Co-authored-by: Claude Code <noreply@anthropic.com>
 
 ## Committing
 
-Use a heredoc so the blank lines and the trailer block survive intact. Do not assemble the message from multiple `-m` flags — git concatenates them without a blank line and the trailer ends up inside the body paragraph, where it is not parsed.
+**Default to one commit.** The trailer does not change how many commits a change deserves: if the working tree is one coherent change, it is one commit with one trailer. Split only when `/conventional-commit` Step 2 says the changes are genuinely unrelated — and then repeat the trailer on **every** commit in the split, because a trailer on only the first credits the agent for a fraction of the work.
+
+Use a heredoc. Multiple `-m` flags do work — git inserts a blank line between each, and the trailer does parse — but a heredoc keeps the exact bytes visible, which matters more here than anywhere else: a trailer that is subtly malformed still looks right in a command line and silently fails to render on the forge.
 
 ```bash
 git commit -F - <<'EOF'
@@ -109,8 +111,6 @@ Replaces the legacy session cookie flow.
 Co-authored-by: Claude Code <noreply@anthropic.com>
 EOF
 ```
-
-For a multi-commit split, repeat the trailer on **every** commit in the split. A trailer on only the first commit credits the agent for a fraction of the work.
 
 ## Verification
 
@@ -128,23 +128,32 @@ git log -1 --format='%(trailers:key=Co-authored-by,valueonly)'
 
 If that prints nothing, the trailer is malformed or misplaced — fix the message with `git commit --amend -F -` (only for a commit created in this session and not yet pushed).
 
-Check every commit in the split:
+The trailer parser is case-insensitive on the key, so `Co-authored-by`, `Co-Authored-By`, and `CO-AUTHORED-BY` all match. A case-sensitive `grep 'Co-authored-by'` does **not** — the convention is written with capital `A` and `B`, so a plain grep reports a false all-clear. Use the parser, or always pass `-i` to grep.
+
+Set `N` to the number of commits you made and check every one — a single-commit change is `N=1`:
 
 ```bash
-git log --format='%h %(trailers:key=Co-authored-by,valueonly)' -<n>
+N=1
+for sha in $(git log --format=%H -"$N"); do
+  printf '%s  ' "${sha:0:7}"
+  git log -1 --format='%(trailers:key=Co-authored-by,valueonly)' "$sha"
+done
 ```
+
+Every line must name an author. A blank line is a commit missing its trailer.
 
 ## Common Mistakes
 
-| Mistake                                                     | Why It Breaks                                                                                  | Correct Approach                          |
-| ----------------------------------------------------------- | ---------------------------------------------------------------------------------------------- | ----------------------------------------- |
-| Inventing `agent@example.com`                               | False attribution baked into permanent history                                                 | Omit the trailer and say so               |
-| Using the user's own identity as co-author                  | Credits the human twice                                                                        | Resolve a distinct agent identity or omit |
-| Building the message with `-m "subject" -m "trailer"`       | Git joins them with no blank line; the trailer is parsed as body prose and no forge renders it | Use `-F -` with a heredoc                 |
-| Trailer placed mid-body                                     | Git only parses the trailing block                                                             | Put it last, after a blank line           |
-| Email without angle brackets                                | GitHub does not match the identity and no avatar renders                                       | `Name <email@domain>` exactly             |
-| `Signed-off-by:` added "as a credit"                        | It is a DCO legal attestation, not a co-author                                                 | Only `Co-authored-by:`                    |
-| Trailer on one commit of a five-commit split                | Under-credits and looks inconsistent in the log                                                | Repeat on every commit                    |
-| Subject modified to include the name                        | Violates the conventional grammar and breaks changelog tooling                                 | Leave the subject alone                   |
-| `!` without `BREAKING CHANGE:` because a trailer is present | The two are independent; the trailer does not replace the footer                               | Keep both, footer above the trailer       |
-| Amending a pushed commit to add the trailer                 | Rewrites shared history                                                                        | Make a new commit                         |
+| Mistake                                                      | Why It Breaks                                                                                          | Correct Approach                                   |
+| ------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------ | -------------------------------------------------- |
+| Inventing `agent@example.com`                                | False attribution baked into permanent history                                                         | Omit the trailer and say so                        |
+| Using the user's own identity as co-author                   | Credits the human twice                                                                                | Resolve a distinct agent identity or omit          |
+| Trailer typed inline instead of via a heredoc                | A subtly malformed trailer looks correct on the command line but silently fails to render on the forge | Use `-F -` with a heredoc so the bytes are visible |
+| Trailer placed mid-body                                      | Git only parses the trailing block                                                                     | Put it last, after a blank line                    |
+| Email without angle brackets                                 | GitHub does not match the identity and no avatar renders                                               | `Name <email@domain>` exactly                      |
+| `Signed-off-by:` added "as a credit"                         | It is a DCO legal attestation, not a co-author                                                         | Only `Co-authored-by:`                             |
+| Trailer on one commit of a multi-commit split                | Under-credits and looks inconsistent in the log                                                        | Repeat on every commit in the split                |
+| Splitting one coherent change to give the agent more commits | The log misstates scope; the trailer count is not a measure of contribution                            | One change, one commit, one trailer                |
+| Subject modified to include the name                         | Violates the conventional grammar and breaks changelog tooling                                         | Leave the subject alone                            |
+| `!` without `BREAKING CHANGE:` because a trailer is present  | The two are independent; the trailer does not replace the footer                                       | Keep both, footer above the trailer                |
+| Amending a pushed commit to add the trailer                  | Rewrites shared history                                                                                | Make a new commit                                  |
