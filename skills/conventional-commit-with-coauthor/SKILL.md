@@ -1,6 +1,6 @@
 ---
 name: conventional-commit-with-coauthor
-description: Commits staged work using the Conventional Commits specification and appends a co-author trailer crediting the agent. Defaults to a single commit when the working tree is one coherent change, splitting only when the changes are genuinely unrelated. Use when the user types /conventional-commit-with-coauthor or explicitly asks for a conventional commit that credits the agent as co-author. Falls back to no trailer when no real agent identity is available.
+description: Commits staged work using the Conventional Commits specification with a short subject message and appends a co-author trailer crediting the agent (no multi-line body or description by default). Defaults to a single commit when the working tree is one coherent change, splitting only when the changes are genuinely unrelated. Use when the user types /conventional-commit-with-coauthor or explicitly asks for a conventional commit that credits the agent as co-author. Falls back to no trailer when no real agent identity is available.
 allowed-tools: Bash Read Grep Glob
 ---
 
@@ -52,14 +52,14 @@ Formatting rules that forges actually enforce:
 - The token is case-insensitive to git but **use `Co-authored-by:` exactly** — GitHub's parser matches this spelling.
 - The value must be `Display Name <addr@domain>` with the email in angle brackets. A bare email with no name, or a name with no email, will not render.
 - One trailer per co-author, one line each.
-- The trailer block goes **last**, after the body, separated from it by one blank line. A trailer in the middle of the body is treated as prose and is not parsed.
+- The trailer block goes **last**, after the subject (or body if extended), separated by one blank line. A trailer in the middle of text is treated as prose and is not parsed.
 - Do not wrap the trailer line.
+- **Short message only by default**: do not write multi-line bodies or descriptions unless explicitly requested.
+
+Default format (subject + blank line + trailer):
 
 ```
 feat(auth): add OAuth2 login
-
-Replaces the legacy session cookie flow. The callback handler now
-validates state on every exchange.
 
 Co-authored-by: Claude Code <noreply@anthropic.com>
 ```
@@ -76,17 +76,15 @@ Co-authored-by: Pair Partner <partner@example.com>
 Everything else stays exactly as `/conventional-commit` prescribes. Specifically:
 
 - The subject is unchanged. Never append `(co-authored)` or a name to the subject.
-- The body still explains the why, not the what.
-- `BREAKING CHANGE:` still goes in the footer block, **above** the co-author trailer, with the blank line between body and footers preserved.
+- **Omit body by default.** Only add an explanatory body if the user explicitly requests one or when documenting breaking changes.
+- `BREAKING CHANGE:` still goes in the footer block, **above** the co-author trailer, with the blank line preserved.
 - Do not add `Signed-off-by:` unless the user asked for a DCO sign-off. It is a legal attestation, not a credit.
 - Do not add a `Generated with` line. That is a tool banner, not a co-author, and this skill's job is the co-author trailer specifically.
 
-Correct footer ordering:
+Correct footer ordering for breaking changes:
 
 ```
 refactor(api)!: change schema version into v3
-
-The v2 envelope is no longer accepted on any endpoint.
 
 BREAKING CHANGE: v2 request envelopes are rejected with 400. Clients must
 send the v3 envelope, which moves `payload` to the top level and drops the
@@ -100,13 +98,11 @@ Co-authored-by: Claude Code <noreply@anthropic.com>
 
 **Default to one commit.** The trailer does not change how many commits a change deserves: if the working tree is one coherent change, it is one commit with one trailer. Split only when `/conventional-commit` Step 2 says the changes are genuinely unrelated — and then repeat the trailer on **every** commit in the split, because a trailer on only the first credits the agent for a fraction of the work.
 
-Use a heredoc. Multiple `-m` flags do work — git inserts a blank line between each, and the trailer does parse — but a heredoc keeps the exact bytes visible, which matters more here than anywhere else: a trailer that is subtly malformed still looks right in a command line and silently fails to render on the forge.
+Use a heredoc to keep bytes and blank lines exact:
 
 ```bash
 git commit -F - <<'EOF'
 feat(auth): add OAuth2 login
-
-Replaces the legacy session cookie flow.
 
 Co-authored-by: Claude Code <noreply@anthropic.com>
 EOF

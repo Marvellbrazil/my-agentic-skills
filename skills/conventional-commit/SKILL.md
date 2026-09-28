@@ -1,6 +1,6 @@
 ---
 name: conventional-commit
-description: Commits staged work using the Conventional Commits specification, defaulting to a single commit when the working tree is one coherent change and splitting into multiple atomic commits only when the changes are genuinely unrelated. Short imperative subjects, scopes only when the change is localized, a breaking-change marker only at a real breaking point. Use when the user types /conventional-commit, says "commit this conventionally", "make a conventional commit", or asks to commit staged changes. Never adds a co-author trailer.
+description: Commits staged work using the Conventional Commits specification, defaulting to a single commit with a short subject message only (no multi-line body or description by default) when the working tree is one coherent change, and splitting into multiple atomic commits only when changes are genuinely unrelated. Short imperative subjects, scopes only when localized, breaking-change marker only at real breaking point. Use when user types /conventional-commit, says "commit this conventionally", "make a conventional commit", or asks to commit staged changes. Never adds co-author trailer.
 allowed-tools: Bash Read Grep Glob
 ---
 
@@ -11,11 +11,12 @@ Commit the working tree as one or more atomic commits that follow the [Conventio
 ## Non-Negotiables
 
 1. **No co-author trailer.** Do not append `Co-Authored-By:`, `Signed-off-by:`, `Generated with`, or any attribution line. Not from the agent, not from a tool. This is the whole difference from `/conventional-commit-with-coauthor`.
-2. **Never use `git commit -a`.** Stage deliberately so unrelated edits cannot leak into a commit.
-3. **Never `git add .` or `git add -A` blindly.** Inspect the tree first. `git add .` is how `.env`, build output, and a half-finished refactor end up in an unrelated commit.
-4. **Never commit without reading the diff.** The message must describe what actually changed, not what the task description said would change.
-5. **Never invent a scope or a type that does not fit.** A wrong scope is worse than no scope.
-6. **Never amend, rebase, or force-push a commit you did not just create in this session.** If the user asked for a commit, make a commit.
+2. **Short message only by default.** Do not write a commit body, multi-line paragraph, or detailed description unless explicitly requested by the user or required for a `BREAKING CHANGE:` migration footer. Keep the commit message single-line and concise.
+3. **Never use `git commit -a`.** Stage deliberately so unrelated edits cannot leak into a commit.
+4. **Never `git add .` or `git add -A` blindly.** Inspect the tree first. `git add .` is how `.env`, build output, and a half-finished refactor end up in an unrelated commit.
+5. **Never commit without reading the diff.** The message must describe what actually changed, not what the task description said would change.
+6. **Never invent a scope or a type that does not fit.** A wrong scope is worse than no scope.
+7. **Never amend, rebase, or force-push a commit you did not just create in this session.** If the user asked for a commit, make a commit.
 
 ## Step 1 — Inspect Before Staging
 
@@ -127,15 +128,23 @@ git diff --cached
 
 ### Grammar
 
+**Default format (short message only):**
+
 ```
-<type>[optional scope][!]: <description>
+<type>[optional scope][!]: <short description>
+```
+
+**Extended format (only when explicitly requested by user, or for breaking changes):**
+
+```
+<type>[optional scope][!]: <short description>
 
 [optional body]
 
 [optional footer(s)]
 ```
 
-The subject line and the blank-line separation are mandatory. The body and footers are optional.
+By default, omit the body entirely. A concise single-line subject message is the standard.
 
 ### Type
 
@@ -202,13 +211,13 @@ When you use `!`, you **must** also add a `BREAKING CHANGE:` footer explaining t
 
 ### Body
 
-Add a body when the **why** is not obvious from the subject. Separate it from the subject with one blank line.
+**Omit by default.** Do not add a body, multi-line paragraph, or detailed explanation unless the user explicitly requests one, or when documenting a `BREAKING CHANGE:` migration.
 
-Wrap at 72 characters. Explain the problem, the constraint that forced this approach, and what was rejected. Do not restate the diff — the diff already says what changed.
+If explicitly requested, separate it from the subject with one blank line. Wrap at 72 characters. Explain the problem and constraints. Never restate the diff.
 
 ### Footers
 
-One blank line after the body. Each footer is a token followed by `: ` or ` #`.
+One blank line after the subject (or body if extended). Each footer is a token followed by `: ` or ` #`.
 
 ```
 BREAKING CHANGE: <what breaks and what the consumer must do>
@@ -231,23 +240,20 @@ In practice, prefer the imperative form (`feat: add chatbot feature using claude
 
 ## Step 5 — Commit
 
-Pass the message with a heredoc. Multiple `-m` flags do work — git inserts a blank line between each — but a heredoc keeps the exact bytes visible in the command, which matters once a body or a footer is involved.
+**Default: single short message.** Pass the message with `-m`:
+
+```bash
+git commit -m "fix(payment-service): handle client-side request timeout"
+```
+
+Use a heredoc only when a footer (e.g. `BREAKING CHANGE:`) or an explicitly requested body is needed:
 
 ```bash
 git commit -F - <<'EOF'
-fix(payment-service): handle client-side request timeout
+fix(payment-service)!: drop legacy v1 callback protocol
 
-The gateway returns 504 when the upstream exceeds 30s, which the client
-treated as a fatal error instead of a retryable one.
-
-Closes: #412
+BREAKING CHANGE: v1 callback protocol removed. Use webhook endpoints.
 EOF
-```
-
-For a subject-only commit:
-
-```bash
-git commit -m "docs: document the skill scan workflow"
 ```
 
 ## Step 6 — Verify and Repeat

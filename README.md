@@ -53,14 +53,16 @@ bash scripts/scan-skills.sh skills
 | Data Dummer | `/data-dummer` | Generates seed, fixture, and factory data that satisfies the real schema — dependency-ordered, locale-aware, deterministic, and idempotent. Reads the ORM or migrations before writing a line. |
 | Bring Me Ideas | `/bring-me-ideas` | Researches a codebase and proposes ranked next-feature ideas, each answered in full 5W+1H form with evidence from the actual project. Read-only. |
 | Summarize | `/summarize` | Produces a structured execution summary of the session: actions taken, issues with root causes, changes made, verification evidence, known gaps, and ordered follow-up. |
-| Conventional Commit | `/conventional-commit` | Commits staged work following the Conventional Commits spec, splitting a large working tree into atomic commits. Scopes only when the change is localized, `!` only for a real breaking point. Never adds a co-author trailer. |
-| Conventional Commit With Coauthor | `/conventional-commit-with-coauthor` | Same as Conventional Commit, but appends a co-author trailer crediting the agent — resolved from a real identity, never fabricated. Omits the trailer when no agent identity exists. |
+| Conventional Commit | `/conventional-commit` | Commits staged work following Conventional Commits, defaulting to a short subject message only (no multi-line body by default). Scopes only when localized, `!` only for a real breaking point. Never adds a co-author trailer. |
+| Conventional Commit With Coauthor | `/conventional-commit-with-coauthor` | Same as Conventional Commit, defaulting to a short subject message, and appends a co-author trailer crediting the agent — resolved from a real identity, never fabricated. |
+| Production Ready | `/production-ready` | Prepares and hardens projects for production: audits financial cost loopholes (unbounded queries, API spend runaways, missing timeouts), implements dynamic `.env` configuration, health probes, and graceful shutdown. |
+| To-do List for Agents | `/todolist` | Shared daily planning and task tracking via an ephemeral root `TODOLIST.md`. Keeps user and agent aligned, prevents rabbit-hole traps, and automatically deletes itself upon full completion. |
 | No Config | `/no-config` | Removes agent-facing configuration from a project — rules files, agent directories, and agent-generated docs — while preserving genuine project documentation. Inventories and confirms before deleting. |
 | Ping | `/ping` | Health-checks the session and replies `pong` with measured tool round-trip latency, host facts, and clock skew. Reports failures instead of inventing numbers. |
 
 ## Active Skills Index
 
-The primary collection of 97 active skills maintained in `skills/`, organized by concern:
+The primary collection of 99 active skills maintained in `skills/`, organized by concern:
 
 ### Core Workflow & Lifecycle
 
@@ -88,6 +90,7 @@ The primary collection of 97 active skills maintained in `skills/`, organized by
 | Spec Driven Development | `/spec-driven-development` | Creates specs before coding. |
 | Summarize | `/summarize` | Produces a structured execution summary of the current session — every action taken, issues found with their root causes, the solutions implemented... |
 | Technical Change Tracker | `/technical-change-tracker` | Track code changes with structured JSON records, state machine enforcement, and AI session handoff for bot continuity |
+| To-do List for Agents | `/todolist` | Shared daily planning and task tracking via an ephemeral root `TODOLIST.md`, preventing rabbit-hole traps and automatically deleting upon completion. |
 | Triage | `/triage` | Move issues and external PRs through a state machine of triage roles, categorise, verify, grill if needed, and write agent-ready briefs. |
 
 ### Git & Version Control
@@ -95,8 +98,8 @@ The primary collection of 97 active skills maintained in `skills/`, organized by
 | Skill Name | Command | Description |
 | --- | --- | --- |
 | CI/CD and Automation | `/ci-cd-and-automation` | Automates CI/CD pipeline setup. |
-| Conventional Commit | `/conventional-commit` | Commits staged work using the Conventional Commits specification, splitting a large working tree into multiple atomic commits with short imperative subjects... |
-| Conventional Commit With Coauthor | `/conventional-commit-with-coauthor` | Commits staged work using the Conventional Commits specification and appends a co-author trailer crediting the agent, splitting a large working tree into... |
+| Conventional Commit | `/conventional-commit` | Commits staged work using the Conventional Commits specification, defaulting to a short message without a body... |
+| Conventional Commit With Coauthor | `/conventional-commit-with-coauthor` | Commits staged work using the Conventional Commits specification, defaulting to a short message, and appends a co-author trailer crediting the agent... |
 | Git Guardrails Claude Code | `/git-guardrails-claude-code` | Set up Claude Code hooks to block dangerous git commands (push, reset --hard, clean, branch -D, etc.) before they execute. |
 | Git Workflow And Versioning | `/git-workflow-and-versioning` | Structures git workflow practices. |
 | PR | `/pr` | Use when writing a PR body. |
@@ -152,6 +155,7 @@ The primary collection of 97 active skills maintained in `skills/`, organized by
 | Domain Modeling | `/domain-modeling` | Build and sharpen a project's domain model. |
 | Frontend API Integration Patterns | `/frontend-api-integration-patterns` | Production-ready patterns for integrating frontend applications with backend APIs, including race condition handling, request cancellation, retry strategies... |
 | Improve Codebase Architecture | `/improve-codebase-architecture` | Scan a codebase for deepening opportunities, present them as a visual HTML report, then grill through whichever one you pick. |
+| Production Ready | `/production-ready` | Prepares and hardens projects for production: audits financial cost loopholes, implements dynamic `.env` configuration, health probes, and graceful shutdown. |
 
 ### Frontend Craft & UI Systems
 
@@ -229,14 +233,19 @@ and niche skills have been organized into the `archive/` directory:
 │   └── skill-scan.yml            # Automated SkillSpector security gate
 ├── scripts/
 │   └── scan-skills.sh            # Parallel batch scanner for skills
-├── skills/                       # 97 Main Active Skills
+├── skills/                       # 99 Main Active Skills
 │   ├── explore/
 │   ├── i18n/
 │   │   ├── SKILL.md
 │   │   └── references/           # 9 domain reference modules
+│   ├── production-ready/
+│   │   ├── SKILL.md
+│   │   └── references/           # 4 production hardening modules
 │   ├── s13n/
 │   │   ├── SKILL.md
 │   │   └── references/           # 17 language & standard modules
+│   ├── todolist/
+│   │   └── SKILL.md
 │   └── ...
 ├── archive/                      # 106 Archived / Specialized Skills
 │   ├── bioinformatics/           # 35 scientific databases & tools
