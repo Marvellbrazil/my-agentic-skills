@@ -62,7 +62,7 @@ bash scripts/scan-skills.sh skills
 
 ## Active Skills Index
 
-The primary collection of 99 active skills maintained in `skills/`, organized by concern:
+The primary collection of 91 active skills maintained in `skills/`, organized by concern:
 
 ### Core Workflow & Lifecycle
 
@@ -110,7 +110,6 @@ The primary collection of 99 active skills maintained in `skills/`, organized by
 
 | Skill Name | Command | Description |
 | --- | --- | --- |
-| Clean | `/clean` | Scans the repository for code smells, dead code, formatting inconsistencies, and clutter across all user source files, outputting refactored and maintainable... |
 | Code Simplification | `/code-simplification` | Simplifies code for clarity. |
 | Constraint Driven Development | `/constraint-driven-development` | Establishes a project's quality bar as a written contract and stops agents quietly lowering it. |
 | Full Output Enforcement | `/full-output-enforcement` | Overrides default LLM truncation behavior. |
@@ -118,9 +117,7 @@ The primary collection of 99 active skills maintained in `skills/`, organized by
 | Modularize | `/modularize` | Restructures monolithic files and tightly coupled functions into modular, decoupled components adhering to the Single Responsibility Principle (SRP). |
 | No Comment | `/no-comment` | No comments were writed while writing the code |
 | No Config | `/no-config` | Removes agent-facing configuration artifacts from a project — rules files (AGENTS.md, CLAUDE.md, GEMINI.md, .cursorrules), agent directories (.claude/... |
-| Optimalize | `/optimalize` | Analyzes the codebase for performance, memory, and structural optimizations. |
 | Performance Optimization | `/performance-optimization` | Optimizes application performance across frontend, backend, queries, and databases. |
-| Performance Optimizer | `/performance-optimizer` | Identifies and fixes performance bottlenecks in code, databases, and APIs. |
 | Standardization | `/s13n` | Standardizes a project by detecting where the same concern is solved in divergent ways across files, asking the user which variant is canonical when the... |
 
 ### Code Review, Testing & Bug Hunting
@@ -130,16 +127,13 @@ The primary collection of 99 active skills maintained in `skills/`, organized by
 | BDD | `/bdd` | Executes development tasks using Behavior-Driven Development methodologies, establishing human-readable business specs (Gherkin syntax) prior to implementation. |
 | Brooks Lint | `/brooks-lint` | AI code reviewer grounded in classic software engineering books for catching design smells, coupling issues, and architectural risks. |
 | Browser Testing With Devtools | `/browser-testing-with-devtools` | Tests in real browsers via Chrome DevTools MCP. |
-| Bug Hunter | `/bug-hunter` | Systematically finds and fixes bugs using proven debugging techniques. |
-| Code Review | `/code-review` | Review the changes since a fixed point (commit, branch, tag, or merge-base) along two axes: Standards (does the code follow this repo's documented coding... |
 | Code Review And Quality | `/code-review-and-quality` | Conducts multi-axis code review. |
 | Codebase Audit Pre Push | `/codebase-audit-pre-push` | Deep audit before GitHub push: removes junk files, dead code, security holes, and optimization issues. |
 | Data Dummer | `/data-dummer` | Generates seed, fixture, and factory data that satisfies the project's real schema — reading the ORM or migrations first, respecting foreign keys and... |
 | Debugging And Error Recovery | `/debugging-and-error-recovery` | Guides systematic root-cause debugging. |
 | Diagnosing Bugs | `/diagnosing-bugs` | Diagnosis loop for hard bugs and performance regressions. |
 | Logic Lens | `/logic-lens` | AI-powered Claude Code skill that performs deep code review using formal logic and reasoning frameworks to detect bugs, anti-patterns, and security risks... |
-| TDD | `/tdd` | Test-driven development. |
-| Test Driven Development | `/test-driven-development` | Drives development with tests using the red-green-refactor loop. |
+| TDD | `/tdd` | Drives development with tests using the red-green-refactor loop. Test first, make it pass, clean up, and guard regressions. |
 
 ### Architecture, API & System Design
 
@@ -178,7 +172,6 @@ The primary collection of 99 active skills maintained in `skills/`, organized by
 | Antislop Code | `/antislop-code` | Code comment hygiene for AI coding agents: remove generic AI-slop comments, keep the valuable ones, never touch the code. |
 | Caveman | `/caveman` | Ultra-compressed communication mode. |
 | Context Engineering | `/context-engineering` | Optimizes agent context setup. |
-| Unslop | `/unslop` | Cut AI tells from any writing. |
 | Writing For Agents | `/writing-for-agents` | Writing documents for agents. |
 | Writing Guidelines | `/writing-guidelines` | Review docs/prose for Writing Guidelines compliance. |
 
@@ -206,7 +199,6 @@ The primary collection of 99 active skills maintained in `skills/`, organized by
 | Security And Hardening | `/security-and-hardening` | Hardens code against vulnerabilities. |
 | Security Audit | `/security-audit` | Security guidance and vulnerability review for codebases, APIs, services, CLI tools, libraries, and daemons. |
 | Using Agent Skills | `/using-agent-skills` | Discovers and invokes agent skills. |
-| Vulnr | `/vulnr` | Conducts a static security code audit across the project to identify potential security vulnerabilities, summarizes findings, interviews the user regarding... |
 
 ## Archived & Specialized Skills
 
@@ -233,7 +225,7 @@ and niche skills have been organized into the `archive/` directory:
 │   └── skill-scan.yml            # Automated SkillSpector security gate
 ├── scripts/
 │   └── scan-skills.sh            # Parallel batch scanner for skills
-├── skills/                       # 99 Main Active Skills
+├── skills/                       # 91 Main Active Skills
 │   ├── explore/
 │   ├── i18n/
 │   │   ├── SKILL.md
