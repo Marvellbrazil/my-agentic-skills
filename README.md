@@ -111,14 +111,14 @@ The primary collection of 97 active skills maintained in `skills/`, organized by
 | Code Simplification | `/code-simplification` | Simplifies code for clarity. |
 | Constraint Driven Development | `/constraint-driven-development` | Establishes a project's quality bar as a written contract and stops agents quietly lowering it. |
 | Full Output Enforcement | `/full-output-enforcement` | Overrides default LLM truncation behavior. |
-| I18n | `/i18n` | Internationalizes a project across language tags and negotiation, dates/times/time zones/calendars, numbers and currency, bidirectional text and RTL layout... |
+| Internationalization | `/i18n` | Internationalizes a project across language tags and negotiation, dates/times/time zones/calendars, numbers and currency, bidirectional text and RTL layout... |
 | Modularize | `/modularize` | Restructures monolithic files and tightly coupled functions into modular, decoupled components adhering to the Single Responsibility Principle (SRP). |
 | No Comment | `/no-comment` | No comments were writed while writing the code |
 | No Config | `/no-config` | Removes agent-facing configuration artifacts from a project — rules files (AGENTS.md, CLAUDE.md, GEMINI.md, .cursorrules), agent directories (.claude/... |
 | Optimalize | `/optimalize` | Analyzes the codebase for performance, memory, and structural optimizations. |
 | Performance Optimization | `/performance-optimization` | Optimizes application performance across frontend, backend, queries, and databases. |
 | Performance Optimizer | `/performance-optimizer` | Identifies and fixes performance bottlenecks in code, databases, and APIs. |
-| S13n | `/s13n` | Standardizes a project by detecting where the same concern is solved in divergent ways across files, asking the user which variant is canonical when the... |
+| Standardization | `/s13n` | Standardizes a project by detecting where the same concern is solved in divergent ways across files, asking the user which variant is canonical when the... |
 
 ### Code Review, Testing & Bug Hunting
 
