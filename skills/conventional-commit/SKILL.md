@@ -1,6 +1,6 @@
 ---
 name: conventional-commit
-description: Commits staged work using the Conventional Commits specification, defaulting to a single commit with a short subject message only (no multi-line body or description by default) when the working tree is one coherent change, and splitting into multiple atomic commits only when changes are genuinely unrelated. Short imperative subjects, scopes only when localized, breaking-change marker only at real breaking point. Use when user types /conventional-commit, says "commit this conventionally", "make a conventional commit", or asks to commit staged changes. Never adds co-author trailer.
+description: Commits staged work using the Conventional Commits specification, landing one commit per concern with a short subject message only (no multi-line body or description by default), so the commit count follows the working tree. Short imperative subjects, scopes only when localized, breaking-change marker only at real breaking point. The repository's own commit convention and an explicit user instruction both override the per-concern default. Use when user types /conventional-commit, says "commit this conventionally", "make a conventional commit", or asks to commit staged changes. Never adds co-author trailer.
 allowed-tools: Bash Read Grep Glob
 ---
 
@@ -54,29 +54,46 @@ If a secret is staged, stop the commit entirely, unstage it with `git restore --
 
 **One logical change per commit.** A commit must be revertable on its own without dragging unrelated work with it.
 
-### One commit is the default, not a fallback
+### Precedence: who wins when commit rules disagree
 
-Most changes are one logical change. **If the working tree is one coherent unit, make one commit and stop** — that is the correct answer, not a compromise. Splitting exists to separate changes that are genuinely unrelated, never to make a history look busy.
+The per-concern rule below is this skill's **default**, not an override. Resolve any conflict in this order, highest first:
 
-Ask one question: **if this commit were reverted tomorrow, would it take anything unrelated with it?**
+| Rank | Source                      | Example                                                                                 |
+| ---- | --------------------------- | --------------------------------------------------------------------------------------- |
+| 1    | The user's instruction      | "just make one commit", "one commit per file", "squash it all"                          |
+| 2    | The repository's convention | `AGENTS.md`, `CONTRIBUTING.md`, `commitlint.config.*`, an established `git log` pattern |
+| 3    | This skill's default        | One commit per concern, short messages                                                  |
 
-| Answer                                           | Commit count                     |
-| ------------------------------------------------ | -------------------------------- |
-| No — everything in it belongs to the same change | **One commit**                   |
-| Yes — it would also revert unrelated work        | Split until each revert is clean |
+Ranks 1 and 2 are authoritative. If the user asks for a single commit, make a single commit — do not argue the per-concern default at them. If the repo's `commitlint` config or `CONTRIBUTING.md` prescribes a different granularity, shape, or message form, follow it and note the divergence from this skill's default.
 
-If you cannot name two commits that each stand alone and each leave the tree working, the answer is one commit. Producing several commits from one change is not thoroughness; it is noise in the log, extra review surface, and a harder `git bisect`.
+Only rank 3 applies when nothing else speaks.
+
+### One commit per concern
+
+A **concern** is one conventional type applied to one bounded context — a module, package, or subsystem. The commit count is a property of the working tree, not a target: enumerate the concerns, then land one commit each.
+
+| Working tree                                  | Commit count                                |
+| --------------------------------------------- | ------------------------------------------- |
+| One concern                                   | **One commit**                              |
+| Trivial tree (≤3 files, one type, one module) | **One commit** — do not manufacture a split |
+| Two or more concerns                          | **One commit per concern**                  |
+
+Enumerate before you stage anything. Read the diff, name each concern as a `type(scope)` pair, and let that list be your plan. A tree that yields four concerns yields four commits; a tree that yields one yields one.
+
+Every commit must still be **independently revertable** and leave the tree in a **working state** — builds and tests pass at that commit. If a split violates either, the split is wrong and those pieces belong together.
 
 ### Do not split when
 
-- The change is one unit: a feature and the test that proves it belong in the same commit. The test is part of the feature, not a separate concern.
-- The change touches several files for one reason — a rename plus its call sites, a new field plus its migration plus its serializer.
-- A fix and its regression test. Splitting them means the test commit is red on its own.
-- Splitting would produce a commit that does not build or does not pass tests. Every commit must be a working state, and if a split breaks that, the split is wrong.
-- You would have to invent a scope or a type for the second commit that does not really fit. That is a signal there was only one change.
-- The "second commit" is a subset of the first with no independent meaning (`feat: add thing` + `refactor: tidy thing you just wrote`).
+Splitting is the default, but it stops at the boundary of a single concern. Never split **one** concern across commits:
 
-### Split only when
+- A feature and the test that proves it. The test is part of the feature, not a separate concern — splitting leaves the test commit red on its own.
+- Several files changed for one reason — a rename plus its call sites, a new field plus its migration plus its serializer.
+- A fix and its regression test.
+- The "second commit" is a subset of the first with no independent meaning (`feat: add thing` + `refactor: tidy thing you just wrote`).
+- You would have to invent a scope or a type for the second commit that does not really fit. That is a signal there was only one concern.
+- The split would produce a commit that does not build or does not pass tests.
+
+### Split when
 
 - The working tree spans two or more conventional types that are genuinely independent (`feat` + `fix`, `refactor` + `docs`).
 - The tree touches unrelated subsystems a reviewer would not review together.
@@ -84,6 +101,7 @@ If you cannot name two commits that each stand alone and each leave the tree wor
 - A dependency bump is mixed with the code that uses the new dependency.
 - Tests for feature A are mixed with feature B.
 - Two unrelated fixes landed in one working tree.
+- Source changes, documentation, and CI configuration are mixed. Each is its own concern and gets its own commit.
 
 When you do split, order the commits so each builds on a valid previous state:
 
@@ -225,7 +243,9 @@ Refs: #412
 Closes: #418
 ```
 
-Use `BREAKING CHANGE:` (uppercase) — it is the only token the spec defines, and tooling keys on it for the major version bump. `BREAKING-CHANGE:` is accepted as an alias.
+Use `BREAKING CHANGE:` (uppercase, with the space) — it is the token the spec defines and the one changelog and release tooling keys on for the major version bump. `BREAKING-CHANGE:` is accepted as an alias by the spec and by those tools.
+
+Note that **git's own trailer parser does not recognize `BREAKING CHANGE:`** — a token containing a space is not a trailer to `git interpret-trailers`, so `%(trailers:key=BREAKING CHANGE)` returns empty and the footer shows up in `%b`. That is expected, not a malformed message: `Closes:` and `Refs:` parse as trailers, `BREAKING CHANGE:` does not. Use the space form regardless, because the spec and the release tooling are the consumers that matter here. If you need git's parser to see it, the hyphenated `BREAKING-CHANGE:` is the form that works.
 
 ### The four required shapes
 
@@ -275,21 +295,23 @@ Confirm:
 - [ ] Every `!` has a matching `BREAKING CHANGE:` footer
 - [ ] No secrets, build output, or editor cruft was committed
 - [ ] Nothing left staged that should not have been
-- [ ] The commit count is the one you decided in Step 2 — not more
+- [ ] The commit count equals the number of concerns you enumerated in Step 2
+- [ ] No commit carries a body it did not need
 
-Set `N` to the number of commits you just made (usually `1`), then run these.
+Set `N` to the number of commits you just made — the concern count from Step 2, which is whatever the working tree produced — then run these.
 
 Validate the subjects mechanically rather than by eye:
 
 ```bash
-N=1
+# N is the concern count from Step 2, not a fixed 1
+N=4
 git log --format='%s' -"$N" | grep -vE '^[a-z]+(\([a-z0-9-]+\))?!?: .+$' && echo 'INVALID SUBJECTS ABOVE' || echo 'all subjects valid'
 ```
 
 Check for an accidental co-author trailer using git's own trailer parser:
 
 ```bash
-N=1
+N=4
 for sha in $(git log --format=%H -"$N"); do
   t=$(git log -1 --format='%(trailers:key=Co-authored-by,valueonly)' "$sha")
   [ -n "$t" ] && echo "UNWANTED TRAILER on ${sha:0:7}: $t"
@@ -305,7 +327,7 @@ Prefer the trailer parser over grepping `git log --format='%B'`, for two reasons
 If you do grep, always pass `-i`:
 
 ```bash
-N=1
+N=4
 git log --format='%B' -"$N" | grep -i -E 'co-authored-by|generated with' && echo 'UNWANTED TRAILER (find the SHA above)' || echo 'clean'
 ```
 
@@ -315,11 +337,11 @@ Confirm the tree is clean and every commit is pushed as expected:
 git status --short --branch
 ```
 
-### If you made more commits than intended
+### If you split one concern across commits
 
-A working tree that yielded three commits where one change existed is a real defect, not a stylistic one. Fix it before pushing — history is cheap to rewrite while it is local.
+The defect is not the commit count — it is a concern that got cut in half. `feat: add the token service` followed by `test: cover the token service` is two commits where one concern existed, and the first one is red on its own. Fix it before pushing; history is cheap to rewrite while it is local.
 
-Squash the extras into the intended commit, keeping the message you want:
+Squash the fragments back into one commit, keeping the message you want:
 
 ```bash
 # Collapse the last 3 commits into one, reusing the message of the oldest
@@ -367,8 +389,9 @@ git rev-list --count HEAD
 | Committing a generated lockfile alone with no manifest change | Lockfile drifts from the manifest                                                                                | Commit the manifest and the lockfile together as `build:` |
 | Trailing period on the subject                                | Breaks the conventional grammar and changelog tooling                                                            | No trailing punctuation                                   |
 | Message describing the plan, not the diff                     | Log lies about what shipped                                                                                      | Read `git diff --cached` before writing the message       |
-| Splitting one coherent change into several commits            | The log lies about scope; `git bisect` and revert both get harder for no benefit                                 | Default to one commit unless each part stands alone       |
+| Everything in one commit when the tree holds several concerns | A revert drags unrelated work with it; `git bisect` lands on the wrong change                                    | Enumerate concerns, then one commit each                  |
 | `feat: add X` + `refactor: tidy X`                            | The second commit is a subset of the first and cannot be reverted independently                                  | One commit — the tidy-up is part of adding X              |
 | Feature and its test in separate commits                      | The test commit is red on its own; each commit must be a working state                                           | Commit them together                                      |
-| Inventing a scope to justify a second commit                  | If no scope or type genuinely fits, there was only one change                                                    | Reconsider; make one commit                               |
-| Splitting to make the history "look thorough"                 | Review surface and log noise grow while clarity drops                                                            | Thoroughness is a clean diff, not a commit count          |
+| Inventing a scope to justify a second commit                  | If no scope or type genuinely fits, there was only one concern                                                   | Reconsider; one concern means one commit                  |
+| Ignoring a repo convention or a user's "one commit" request   | The precedence chain puts both above the per-concern default                                                     | Follow the instruction or the convention                  |
+| A body written out of habit on a self-explanatory subject     | The reader pays for prose they do not need on every `git log`                                                    | Short message by default; a body only when asked          |

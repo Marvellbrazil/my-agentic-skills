@@ -53,8 +53,8 @@ bash scripts/scan-skills.sh skills
 | Data Dummer | `/data-dummer` | Generates seed, fixture, and factory data that satisfies the real schema — dependency-ordered, locale-aware, deterministic, and idempotent. Reads the ORM or migrations before writing a line. |
 | Bring Me Ideas | `/bring-me-ideas` | Researches a codebase and proposes ranked next-feature ideas, each answered in full 5W+1H form with evidence from the actual project. Read-only. |
 | Summarize | `/summarize` | Produces a structured execution summary of the session: actions taken, issues with root causes, changes made, verification evidence, known gaps, and ordered follow-up. |
-| Conventional Commit | `/conventional-commit` | Commits staged work following Conventional Commits, defaulting to a short subject message only (no multi-line body by default). Scopes only when localized, `!` only for a real breaking point. Never adds a co-author trailer. |
-| Conventional Commit With Coauthor | `/conventional-commit-with-coauthor` | Same as Conventional Commit, defaulting to a short subject message, and appends a co-author trailer crediting the agent — resolved from a real identity, never fabricated. |
+| Conventional Commit | `/conventional-commit` | Commits staged work following Conventional Commits, landing one commit per concern so the commit count follows the working tree, with a short subject message only (no multi-line body by default). Scopes only when localized, `!` only for a real breaking point. Never adds a co-author trailer. |
+| Conventional Commit With Coauthor | `/conventional-commit-with-coauthor` | Same as Conventional Commit, one commit per concern with a short subject message, and appends a co-author trailer crediting the agent on every commit — resolved from a real identity, never fabricated. |
 | Production Ready | `/production-ready` | Prepares and hardens projects for production: audits financial cost loopholes (unbounded queries, API spend runaways, missing timeouts), implements dynamic `.env` configuration, health probes, and graceful shutdown. |
 | To-do List for Agents | `/todolist` | Shared daily planning and task tracking via an ephemeral root `TODOLIST.md`. Keeps user and agent aligned, prevents rabbit-hole traps, and automatically deletes itself upon full completion. |
 | No Config | `/no-config` | Removes agent-facing configuration from a project — rules files, agent directories, and agent-generated docs — while preserving genuine project documentation. Inventories and confirms before deleting. |
@@ -98,8 +98,8 @@ The primary collection of 91 active skills maintained in `skills/`, organized by
 | Skill Name | Command | Description |
 | --- | --- | --- |
 | CI/CD and Automation | `/ci-cd-and-automation` | Automates CI/CD pipeline setup. |
-| Conventional Commit | `/conventional-commit` | Commits staged work using the Conventional Commits specification, defaulting to a short message without a body... |
-| Conventional Commit With Coauthor | `/conventional-commit-with-coauthor` | Commits staged work using the Conventional Commits specification, defaulting to a short message, and appends a co-author trailer crediting the agent... |
+| Conventional Commit | `/conventional-commit` | Commits staged work using the Conventional Commits specification, landing one commit per concern with a short message and no body by default... |
+| Conventional Commit With Coauthor | `/conventional-commit-with-coauthor` | Commits staged work using the Conventional Commits specification, one commit per concern with a short message, and appends a co-author trailer crediting the agent... |
 | Git Guardrails Claude Code | `/git-guardrails-claude-code` | Set up Claude Code hooks to block dangerous git commands (push, reset --hard, clean, branch -D, etc.) before they execute. |
 | Git Workflow And Versioning | `/git-workflow-and-versioning` | Structures git workflow practices. |
 | PR | `/pr` | Use when writing a PR body. |
