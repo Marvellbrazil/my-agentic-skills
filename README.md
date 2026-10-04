@@ -62,7 +62,7 @@ bash scripts/scan-skills.sh skills
 
 ## Active Skills Index
 
-The primary collection of 91 active skills maintained in `skills/`, organized by concern:
+The primary collection of 92 active skills maintained in `skills/`, organized by concern:
 
 ### Core Workflow & Lifecycle
 
@@ -86,6 +86,7 @@ The primary collection of 91 active skills maintained in `skills/`, organized by
 | Resolve Till Done | `/resolve-till-done` | Initiates an extended autonomous execution loop. |
 | Retro | `/retro` | Conduct a retrospective on a coding session. |
 | Shipping And Launch | `/shipping-and-launch` | Prepares production launches. |
+| Skill Ship | `/skill-ship` | Ships changed skills from this repository in one ordered pass — runs the SkillSpector security gate, regenerates the README skill index and counts, syncs... |
 | Source Driven Development | `/source-driven-development` | Grounds every implementation decision in official documentation. |
 | Spec Driven Development | `/spec-driven-development` | Creates specs before coding. |
 | Summarize | `/summarize` | Produces a structured execution summary of the current session — every action taken, issues found with their root causes, the solutions implemented... |
@@ -142,7 +143,7 @@ The primary collection of 91 active skills maintained in `skills/`, organized by
 | API And Interface Design | `/api-and-interface-design` | Guides stable API and interface design. |
 | API Endpoint Builder | `/api-endpoint-builder` | Builds production-ready REST API endpoints with validation, error handling, authentication, and documentation. |
 | Codebase Design | `/codebase-design` | Shared vocabulary for designing deep modules. |
-| Composition Patterns | `/composition-patterns` | --- |
+| Composition Patterns | `/composition-patterns` | React composition patterns that scale. |
 | DDD | `/ddd` | Enforces Domain-Driven Design principles across all implementation tasks, structuring code around Ubiquitous Language, Bounded Contexts, Aggregates, Entities... |
 | Deprecation And Migration | `/deprecation-and-migration` | Manages deprecation and migration. |
 | Documentation and ADRs | `/documentation-and-adrs` | Records decisions and documentation. |
@@ -183,7 +184,7 @@ The primary collection of 91 active skills maintained in `skills/`, organized by
 | Cloudflare | `/cloudflare` | Comprehensive Cloudflare platform skill covering Workers, Pages, storage (KV, D1, R2), AI (Workers AI, Vectorize, Agents SDK), feature flags (Flagship)... |
 | Hono | `/hono` | Build ultra-fast web APIs and full-stack apps with Hono — runs on Cloudflare Workers, Deno, Bun, Node.js, and any WinterCG-compatible runtime. |
 | React Best Practices | `/react-best-practices` | React and Next.js performance optimization guidelines from Vercel Engineering. |
-| React Native Skills | `/react-native-skills` | --- |
+| React Native Skills | `/react-native-skills` | React Native and Expo best practices for building performant mobile apps. |
 | Workers Best Practices | `/workers-best-practices` | Reviews and authors Cloudflare Workers code against production best practices. |
 | Wrangler | `/wrangler` | Cloudflare Workers CLI for deploying, developing, and managing Workers, KV, R2, D1, Vectorize, Hyperdrive, Workers AI, Containers, Queues, Workflows... |
 
@@ -224,8 +225,9 @@ and niche skills have been organized into the `archive/` directory:
 ├── .github/workflows/
 │   └── skill-scan.yml            # Automated SkillSpector security gate
 ├── scripts/
+│   ├── gen-readme.py             # Regenerates the skill index and counts
 │   └── scan-skills.sh            # Parallel batch scanner for skills
-├── skills/                       # 91 Main Active Skills
+├── skills/                       # 92 Main Active Skills
 │   ├── explore/
 │   ├── i18n/
 │   │   ├── SKILL.md
