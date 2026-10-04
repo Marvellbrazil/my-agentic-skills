@@ -245,7 +245,7 @@ If a formatter rewrites a file you did not intend to touch, that is a finding: t
 
 ### Step 2 — Semantic normalization, by hand
 
-Apply the authorized variant one concern at a time, and one commit's worth of change at a time.
+Apply the authorized variant one concern at a time. How those concerns become commits is not this skill's decision: follow the repository's own commit convention, or the commit skill in use, if either exists. Only when nothing else specifies it, land one concern's worth of change per commit.
 
 - Replace the losing variant with the winning one. Do not leave the losing variant behind a flag or a compatibility shim unless the user asked for one.
 - **Update every call site, not just the definition.** A renamed helper with a stale caller is a broken build.
