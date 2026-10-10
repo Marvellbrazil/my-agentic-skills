@@ -62,7 +62,7 @@ bash scripts/scan-skills.sh skills
 
 ## Active Skills Index
 
-The primary collection of 92 active skills maintained in `skills/`, organized by concern:
+The primary collection of 93 active skills maintained in `skills/`, organized by concern:
 
 ### Core Workflow & Lifecycle
 
@@ -116,6 +116,7 @@ The primary collection of 92 active skills maintained in `skills/`, organized by
 | Full Output Enforcement | `/full-output-enforcement` | Overrides default LLM truncation behavior. |
 | Internationalization | `/i18n` | Internationalizes a project across language tags and negotiation, dates/times/time zones/calendars, numbers and currency, bidirectional text and RTL layout... |
 | Modularize | `/modularize` | Restructures monolithic files and tightly coupled functions into modular, decoupled components adhering to the Single Responsibility Principle (SRP). |
+| Human Comment | `/human-comment` | Writes useful explanatory comments and documentation with lowercase prose, natural wording, and no decorative AI-style filler. |
 | No Comment | `/no-comment` | No comments were writed while writing the code |
 | No Config | `/no-config` | Removes agent-facing configuration artifacts from a project — rules files (AGENTS.md, CLAUDE.md, GEMINI.md, .cursorrules), agent directories (.claude/... |
 | Performance Optimization | `/performance-optimization` | Optimizes application performance across frontend, backend, queries, and databases. |
@@ -227,7 +228,7 @@ and niche skills have been organized into the `archive/` directory:
 ├── scripts/
 │   ├── gen-readme.py             # Regenerates the skill index and counts
 │   └── scan-skills.sh            # Parallel batch scanner for skills
-├── skills/                       # 92 Main Active Skills
+├── skills/                       # 93 Main Active Skills
 │   ├── explore/
 │   ├── i18n/
 │   │   ├── SKILL.md

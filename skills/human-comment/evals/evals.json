@@ -1,0 +1,41 @@
+{
+  "skill_name": "human-comment",
+  "evals": [
+    {
+      "id": 1,
+      "name": "password-comment",
+      "prompt": "Rapikan komentar kode ini agar natural dan explanatory untuk dokumentasi. Jangan ubah executable code. Balas kode saja.\n// ---------------\n// Fase 1: Encrypt Password Pada Login\n// ---------------\nconst passwordHash = await bcrypt.hash(password, 12);\nawait savePasswordHash(userID, passwordHash);",
+      "expected_output": "Short lowercase Indonesian comments describing password hashing, not encryption; no banners or invented login behavior; executable code unchanged.",
+      "files": [],
+      "expectations": [
+        "Executable code is unchanged",
+        "No decorative separators or phase labels remain",
+        "Comment prose is lowercase and describes hashing rather than reversible encryption"
+      ]
+    },
+    {
+      "id": 2,
+      "name": "function-contract",
+      "prompt": "Tambahkan dokumentasi fungsi ini untuk teammate. Jelaskan aturan refund dan perubahan data, bukan mengulang nama parameter. Balas kode saja, logika jangan berubah.\nexport function refundCredits(account, usedCredits) {\n  if (usedCredits < 0) throw new RangeError('usedCredits must be non-negative');\n  const refunded = Math.min(usedCredits, account.spentCredits);\n  account.spentCredits -= refunded;\n  account.availableCredits += refunded;\n  return refunded;\n}",
+      "expected_output": "Lowercase Indonesian documentation explains cap at spent credits, in-place account mutation, actual returned amount, and negative-input error without claiming extra validation or transaction guarantees.",
+      "files": [],
+      "expectations": [
+        "Executable code is unchanged",
+        "Documents refund cap, account mutation, return value, and negative-input error",
+        "Documentation prose is lowercase and contains no invented guarantees"
+      ]
+    },
+    {
+      "id": 3,
+      "name": "preserve-directives",
+      "prompt": "Ubah komentar penjelasan menjadi lebih natural untuk dokumentasi. Jangan ubah kode, directive, atau komentar legal. Balas kode saja.\n// Copyright ACME 2026\n// eslint-disable-next-line no-console -- RequiredByLegacyClient\nconsole.log('UserID', UserID);\n// This function is responsible for obtaining the user.\nconst user = await getUserByID(UserID);\nif (user === null) return null;\n// Important: This performs the core logic.\nreturn user.DisplayName;",
+      "expected_output": "Legal and eslint directive stay byte-exact; code preserves UserID, getUserByID, and DisplayName; rewritten natural prose is lowercase and generic labels are removed.",
+      "files": [],
+      "expectations": [
+        "Executable code is unchanged",
+        "Copyright and eslint directive are preserved exactly",
+        "No generic core-logic label remains and new prose is lowercase"
+      ]
+    }
+  ]
+}
