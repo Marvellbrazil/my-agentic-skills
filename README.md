@@ -62,7 +62,7 @@ bash scripts/scan-skills.sh skills
 
 ## Active Skills Index
 
-The primary collection of 93 active skills maintained in `skills/`, organized by concern:
+The primary collection of 94 active skills maintained in `skills/`, organized by concern:
 
 ### Core Workflow & Lifecycle
 
@@ -79,6 +79,7 @@ The primary collection of 93 active skills maintained in `skills/`, organized by
 | Implement | `/implement` | Implement a piece of work based on a spec or set of tickets. |
 | Incremental Implementation | `/incremental-implementation` | Delivers changes incrementally in thin, verifiable slices. |
 | Interview Me | `/interview-me` | Extracts what the user actually wants instead of what they think they should want. |
+| Make it Ship | `/make-it-ship` | Use when the user invokes /make-it-ship, asks whether a prototype is ready to become a product, requests a pre-launch checklist audit, or wants a... |
 | Ping | `/ping` | Health-checks the agent session and reports a "pong" with measured tool round-trip latency, host facts, and clock skew. |
 | Planning And Task Breakdown | `/planning-and-task-breakdown` | Breaks work into ordered tasks. |
 | Prototype | `/prototype` | Build a throwaway prototype to answer a design question. |
@@ -228,7 +229,7 @@ and niche skills have been organized into the `archive/` directory:
 ├── scripts/
 │   ├── gen-readme.py             # Regenerates the skill index and counts
 │   └── scan-skills.sh            # Parallel batch scanner for skills
-├── skills/                       # 93 Main Active Skills
+├── skills/                       # 94 Main Active Skills
 │   ├── explore/
 │   ├── i18n/
 │   │   ├── SKILL.md

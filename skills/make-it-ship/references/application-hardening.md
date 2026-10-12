@@ -1,0 +1,28 @@
+# Application hardening
+
+Source group 7. Focuses on runtime configuration, attack surface reduction, framework hardening, and defense in depth. Many items here represent practical developer summaries that cross-reference formal security controls in `security-basics.md` and `security-advanced.md`. Use [SKILL.md](../SKILL.md) for deduplication and status reporting.
+
+| ID | Source item | Applicability, interpretation and evidence to seek |
+| ----- | ---------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| AH-01 | remove unused packages | Attack surface reduction. Run dependency analysis (e.g. `depcheck`, `cargo-udeps`, `composer-unused`) to identify and remove unused third-party dependencies from manifests and lockfiles. Reduces bundle size and supply-chain vulnerability exposure. |
+| AH-02 | check git for secrets | Secret hygiene in version control. Scan git commit history, commit messages, and branches using automated tools (e.g. Gitleaks, Trufflehog) for API tokens, private SSH keys, and passwords. Cross-reference: SB-02. |
+| AH-03 | add rate limiting | Resource exhaustion and brute-force mitigation. Inspect application gateway, reverse proxy, or middleware for request rate limiting across login, password reset, payment, and public API endpoints. Cross-reference: SB-11, SA-12. |
+| AH-04 | check user access | Authorization model audit. Inspect role-based or attribute-based access control (RBAC/ABAC) on every data model and API handler to ensure users can only access and modify their own records. Cross-reference: SB-07. |
+| AH-05 | hash passwords properly | Credential storage hardening. Verify use of slow, memory-hard adaptive hashing algorithms (Argon2id, bcrypt, PBKDF2 with high iteration counts) with unique cryptographic salts. Cross-reference: SB-10. |
+| AH-06 | hide my API keys | Credential exposure prevention. Ensure private service keys, third-party secrets, and backend tokens are not embedded in client bundles, public repositories, or frontend HTML. Cross-reference: SB-01, PF-14. |
+| AH-07 | proper authentication | Authentication flow audit. Verify multi-factor authentication (MFA) support, secure session token generation, cryptographically signed JWTs, and secure password reset workflows. Cross-reference: SB-06. |
+| AH-08 | update dependencies | Supply-chain hygiene. Run automated vulnerability auditing (e.g. `npm audit`, `bun audit`, `cargo audit`, `pip-audit`) and update packages with known Common Vulnerabilities and Exposures (CVEs). Cross-reference: SB-20. |
+| AH-09 | sanitize my forms | Input validation and normalization. Validate and normalize form input on the server side against strict type, length, regex, and encoding rules before processing. Cross-reference: SB-14, SA-13. |
+| AH-10 | protect against XSS | Cross-Site Scripting defense. Ensure context-aware output escaping is utilized across all template rendering paths, sanitize user-submitted HTML, and enforce a strict Content Security Policy. Cross-reference: SB-15, SB-18. |
+| AH-11 | make sure debug mode is off (prod) | Production configuration lockdown. Verify that `NODE_ENV=production`, `DEBUG=false`, framework verbose error pages, and interactive REPL consoles are disabled in production to prevent stack trace and environment leakage. |
+| AH-12 | check my env variables | Environment configuration validation. Verify that all required runtime environment variables are defined, strictly validated at process startup (e.g., using Zod/Envalid), and that no default development values remain in production. Related: PF-14. |
+| AH-13 | check for exposed files | Web root hygiene. Inspect web root and public asset directories to ensure sensitive files (e.g. `.env`, `.git/`, `.DS_Store`, backup `.sql` dumps, internal documentation) are blocked from HTTP access. Related: SA-15. |
+| AH-14 | protect admin routes | Administrative interface security. Verify that administrative endpoints (e.g. `/admin`, `/dashboard`, internal management APIs) require strong authentication, elevated role checks, session timeouts, and optionally IP allowlisting or VPN gating. Cross-reference: SA-16. |
+| AH-15 | secure API endpoints | API transport and authentication hardening. Verify that all REST/GraphQL endpoints require valid authentication, use TLS transport, enforce request payload size limits, and validate HTTP method constraints. Cross-reference: SB-06, SB-17, SA-11. |
+| AH-16 | check CORS settings | Cross-Origin Resource Sharing lockdown. Ensure `Access-Control-Allow-Origin` specifies only trusted production client origins and disallows open wildcards (`*`) when credentials (`Access-Control-Allow-Credentials: true`) are permitted. Cross-reference: SA-14. |
+| AH-17 | add security headers | HTTP response hardening. Verify deployment of `Content-Security-Policy`, `X-Content-Type-Options: nosniff`, `X-Frame-Options: DENY`, `Referrer-Policy`, and `Permissions-Policy`. Cross-reference: SB-18, SA-01. |
+| AH-18 | secure db access | Database network and credential isolation. Ensure the database is not exposed to the public internet (bind to localhost, VPC private subnet, or socket), enforce encrypted TLS connections, and limit account privileges. Cross-reference: SB-04, SA-20. |
+
+## Supporting guidance
+
+- Many items in this list are practical expressions of controls detailed in `security-basics.md` and `security-advanced.md`. Map findings directly to the underlying mechanism and avoid reporting duplicate vulnerabilities.

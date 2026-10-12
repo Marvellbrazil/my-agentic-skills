@@ -1,0 +1,11 @@
+# Workspaces and evaluation runs
+*-workspace/
+
+# Security reports and scan artifacts
+skillspector-reports/
+
+# Claude agent worktrees and local runtime state
+.claude/worktrees/
+
+# Ephemeral task tracking
+TODOLIST.md

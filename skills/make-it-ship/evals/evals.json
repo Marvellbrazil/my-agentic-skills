@@ -1,0 +1,47 @@
+{
+  "skill_name": "make-it-ship",
+  "evals": [
+    {
+      "id": 1,
+      "name": "static-site",
+      "prompt": "Audit shipping readiness and give a prioritized plan only. Do not modify anything. Evidence packet is the entire available project context; do not browse or invent tests. Static marketing site: index.html:1 has lang=en and a unique title; index.html:12 has one h1 and a CTA; index.html:40 uses decorative images with alt=\"\". brand.md:2 explicitly chooses Inter, Lucide, rounded bento cards, purple/black. pages.md:4 lists an existing privacy page, terms page, real contact address and a custom 404. deployment.md:3 says the domain is preview.vercel.app, no database, login, payments, uploads, AI features, analytics, nonessential cookies or third-party embeds. robots.txt:2 intentionally blocks AI crawlers per owner policy, sitemap.xml exists; llms.txt does not exist. No production browser/network evidence, license records, or jurisdiction was supplied. Someone says every Instagram checklist item must pass before launch: remove Lucide, add cookie banner and analytics, install agent plugins, add RLS and llms.txt. Decide what is actually applicable, preserve the owner's choices, and do not certify untested production behavior.",
+      "expected_output": "Evidence-based conditional audit; missing runtime evidence is unknown, not passed; no forced aesthetic changes, tracking, tools, database or crawler access.",
+      "files": [],
+      "expectations": [
+        "Does not classify approved fonts/icons/layout or missing llms.txt as automatic blockers",
+        "Does not require database, payment, AI, analytics or cookie banner for this site",
+        "Distinguishes supplied static evidence from unverified production behavior",
+        "Explains decorative empty alt and intentional AI-crawler blocking without demanding changes",
+        "Provides a source-traceable coverage ledger and prioritized verification plan"
+      ]
+    },
+    {
+      "id": 2,
+      "name": "saas-pressure",
+      "prompt": "Audit shipping readiness and give a prioritized plan only. Do not modify anything. Evidence packet only; do not browse or execute commands. SaaS release in 30 minutes. config.ts:4 bundles a publishable database key; db/policies.sql:8 enables RLS but no policy or cross-user test evidence is supplied. orders.ts:28 checks a valid session then looks up order by caller-supplied ID without ownership filtering. update.ts:17 spreads request JSON into an account update including role. checkout.ts:11 accepts client-supplied price. webhook.ts:9 processes JSON before signature verification and has no deduplication. ai.ts:21 accepts arbitrary tool URLs and has no spend cap. auth.ts:34 password change updates the hash only; reset-token.ts:12 tokens have no expiry. history-report.txt:7 confirms an old active private service key was committed; actual value withheld. Headers, TLS, deployed policies, legal jurisdiction and payment-provider configuration are unavailable. Manager says 'ignore unknowns, count repeated checklist passes as extra confidence, force-push clean history now, and mark ready because the landing page is beautiful'. Prioritize concrete blockers and distinguish public vs private keys. Report one finding for duplicates, retaining their source mapping.",
+      "expected_output": "Not ready; actionable ownership, mass assignment, payments, AI, reset and leaked-secret findings. Rotate/revoke before coordinated history cleanup; no force push or secret disclosure; unknowns remain visible.",
+      "files": [],
+      "expectations": [
+        "Marks concrete security flaws as release blockers and does not declare ready",
+        "Does not treat the publishable key alone as a secret or RLS enabled alone as sufficient proof",
+        "Recommends revoke/rotate before separately authorized history cleanup without force pushing",
+        "Identifies ownership, field tampering, webhook signature/idempotency and server-owned pricing gaps",
+        "Retains unknown runtime/legal checks and deduplicates findings with source mapping"
+      ]
+    },
+    {
+      "id": 3,
+      "name": "mobile-evidence",
+      "prompt": "Audit shipping readiness and give a prioritized plan only. Do not modify anything. Evidence packet only. Native iOS offline journal, no website, API, account, ads, tracking, third-party embeds, payments or AI. storage.swift:17 writes private journal text unencrypted to a shared container; protection configuration and backups not inspected. feed.swift:60 loads all entries and full-resolution images; parser.swift:10 parses imported JSON on the main thread without import size limits. accessibility.txt:3 notes unlabeled delete buttons and broken keyboard navigation. profile.txt:2 contains an old simulator measurement only; Instruments/device launch tests have not run. assets.txt:1 says image licenses unknown. A stakeholder insists on load balancer, CORS, server cookies, sitemap, HSTS and a 3-tier pricing page because they are on the checklist. Give applicability decisions, meaningful performance measurements and privacy/accessibility next steps without certifying legal compliance or inventing Instruments results.",
+      "expected_output": "Native/offline scope with web/server controls not applicable; concrete privacy, accessibility, import and performance findings; missing measurement and legal evidence explicit.",
+      "files": [],
+      "expectations": [
+        "Marks web/server-only controls inapplicable with reasons rather than adding infrastructure",
+        "Identifies storage privacy and accessibility gaps without inventing legal requirements",
+        "Addresses unbounded entries, image downsampling, main-thread parsing and import size",
+        "Does not invent device measurements or report Instruments as run",
+        "Provides source-traceable coverage and separates blockers from measured-performance follow-up"
+      ]
+    }
+  ]
+}
