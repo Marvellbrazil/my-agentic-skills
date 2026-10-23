@@ -12,6 +12,17 @@ Write a failing test before writing the code that makes it pass. For bug fixes, 
 
 See [tests.md](tests.md) for good vs bad test examples, and [mocking.md](mocking.md) for mocking guidelines at system boundaries.
 
+## Reference Modules
+
+Load these detailed reference guides for deep-dive best practices on test design, test doubles, and legacy code refactoring:
+
+| Concern | Reference Module | What It Covers |
+| :--- | :--- | :--- |
+| **Test Design, Patterns & Determinism** | [references/test-design-and-patterns.md](references/test-design-and-patterns.md) | State vs. interaction testing, DAMP vs. DRY, Test Data Builders, table-driven/parameterized tests, boundary matrices, property-based testing, and eliminating clock/random flakiness |
+| **Mocking, Test Doubles & Boundaries** | [references/mocking-and-test-doubles.md](references/mocking-and-test-doubles.md) | The Test Double Hierarchy (Real > Fake > Stub > Spy > Mock), Functional Core / Imperative Shell, contract-verified In-Memory Fakes, and avoiding over-mocking traps |
+| **Legacy Code, Bug Fixes & Refactoring** | [references/legacy-code-and-refactoring.md](references/legacy-code-and-refactoring.md) | The Prove-It bug reproduction protocol, Characterization (Golden Master) tests, finding seams, Sprout/Wrap patterns, and the Two Hats refactoring rule |
+| **Quick Examples & Boundary Rules** | [tests.md](tests.md) · [mocking.md](mocking.md) | Concise cheat sheets for good vs. bad assertions and SDK-style boundary interfaces |
+
 ## When to Use
 
 - Implementing any new logic or behavior
@@ -246,7 +257,7 @@ Preference order (most to least preferred):
 4. Mock (interaction)   → Verifies method calls — use sparingly
 ```
 
-**Use mocks only when:** the real implementation is too slow, non-deterministic, or has side effects you can't control (external APIs, email sending). Over-mocking creates tests that pass while production breaks. See [mocking.md](mocking.md) for boundary designs.
+**Use mocks only when:** the real implementation is too slow, non-deterministic, or has side effects you can't control (external APIs, email sending). Over-mocking creates tests that pass while production breaks. See [mocking.md](mocking.md) and [references/mocking-and-test-doubles.md](references/mocking-and-test-doubles.md) for boundary designs and contract-verified fakes.
 
 ### Use the Arrange-Act-Assert Pattern
 
