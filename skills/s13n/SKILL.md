@@ -1,7 +1,7 @@
 ---
 name: s13n
 description: Standardizes a project by detecting where the same concern is solved in divergent ways across files, asking the user which variant is canonical when the codebase does not already answer it, then normalizing the code to that standard. Also aligns code with the project's documented conventions and per-language best practices. Use when the user types /s13n, asks to standardize, normalize, or unify a codebase, asks why files disagree on a pattern, or wants a project made consistent. Accepts an optional scope to standardize only selected aspects or directories.
-allowed-tools: Read Write Edit Glob Grep Bash
+allowed-tools: Read Write Edit Glob Grep Bash mcp__context7__resolve-library-id mcp__context7__query-docs
 ---
 
 # Standardization (s13n)
@@ -28,7 +28,7 @@ Before asking anything, check whether the project already answers the question. 
 | 2    | Enforced tooling configuration              | `.editorconfig`, `eslint.config.js`, `.prettierrc`, `ruff.toml`, `pyproject.toml` `[tool.*]`, `phpstan.neon`, `.golangci.yml`, `.rubocop.yml`, `.stylelintrc`, `analysis_options.yaml` |
 | 3    | A dominant, unambiguous pattern in the code | 47 of 48 files do it one way                                                                                                                                                           |
 | 4    | The user's answer                           | Given in response to your question                                                                                                                                                     |
-| 5    | The per-language best practice              | The `references/std-*.md` modules in this skill                                                                                                                                        |
+| 5    | Official library/framework docs & per-language best practice | Live docs fetched via **Context7 MCP** (`resolve-library-id` → `query-docs`) + the `references/std-*.md` modules in this skill |
 
 **Ranks 1 and 2 are authoritative and are not up for a vote.** If `AGENTS.md` says "all monetary values are integer cents" and 30 files use floats, the document wins and those 30 files are the defect. Do not ask the user to choose between their own documented standard and a violation of it — report the violation and fix it.
 
@@ -61,6 +61,25 @@ Load a module when its concern is in scope. Each is self-contained; read it in f
 | Git, branching, commits                      | [references/std-git.md](references/std-git.md)             |
 
 Load `std-structure.md` for any structural divergence, and the language module for the repository's primary language. Do not load every module — a normalization pass that consults seventeen standards will apply none of them well.
+
+## Fetching Live Library & Tooling Standards via Context7 MCP
+
+Static training data drifts behind fast-moving frameworks, SDKs, and linters (e.g., ESLint v9 flat config vs. legacy `.eslintrc`, Zod v4 vs. v3, Next.js App Router, React 19, Prisma, Ruff, Biome). Whenever a divergence involves a third-party library, framework idiom, or linter configuration rule, **you MUST query Context7 MCP** rather than guessing from memory:
+
+1. **Step 1 — Resolve the Library ID**:
+   Call `resolve-library-id` (`mcp__context7__resolve-library-id`) with:
+   - `libraryName`: The package, framework, or linter name from `package.json`, `pyproject.toml`, `go.mod`, or `Cargo.toml` (e.g., `"eslint"`, `"zod"`, `"next.js"`, `"ruff"`).
+   - `query`: The specific convention, API, or linter rule being standardized.
+2. **Step 2 — Select the Best Version-Matched ID**:
+   Pick the official `/org/project` ID (preferring the version-specific ID matching the repository's installed version when available).
+3. **Step 3 — Query Official Documentation**:
+   Call `query-docs` (`mcp__context7__query-docs`) with:
+   - `libraryId`: The resolved ID (e.g., `/eslint/eslint`, `/colinhacks/zod`).
+   - `query`: The specific API pattern, migration deprecation, or linter guard configuration syntax.
+
+**When Context7 MCP is mandatory during `/s13n`:**
+- **Evaluating Divergent Library Usage (Phase 2)**: Before recommending Variant A over Variant B for a library/framework call, verify via Context7 which variant is canonical for the project's installed version (preventing you from recommending a deprecated v1 API just because it appears in more legacy files).
+- **Normalizing Framework Idioms & Writing Linter Guards (Phase 4)**: Verify the exact API replacement signature and the exact linter rule schema (e.g., `no-restricted-imports`, `flake8-tidy-imports.banned-api`, Biome lint rules) against current Context7 docs so normalization never breaks the build.
 
 ## Phase 1 — Reconnaissance
 
@@ -251,7 +270,7 @@ Apply the authorized variant one concern at a time. How those concerns become co
 - **Update every call site, not just the definition.** A renamed helper with a stale caller is a broken build.
 - **Update the tests** that assert the old shape.
 - **Update the documentation** that describes the old pattern.
-- **Update the linter configuration** so the losing variant is now an error, not merely absent. This is what prevents the divergence from returning.
+- **Update the linter configuration** so the losing variant is now an error, not merely absent. This is what prevents the divergence from returning. (Use **Context7 MCP** `resolve-library-id` → `query-docs` to confirm the exact rule syntax for the repository's installed linter version before editing the config.)
 
 ```js
 // eslint.config.js
